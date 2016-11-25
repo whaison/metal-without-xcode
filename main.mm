@@ -8,7 +8,9 @@
 @end
 
 int main () {
+    NSLog(@"main()");
     @autoreleasepool {
+        NSLog(@"autoreleasepool()");
         // Application.
         [NSApplication sharedApplication];
         [NSApp setActivationPolicy:NSApplicationActivationPolicyRegular];
@@ -27,12 +29,18 @@ int main () {
         [menu addItem:quit];
         NSApp.mainMenu = bar;
 
+        NSRect rect = NSMakeRect(0, 0, 256, 256);
         // Window.
         NSRect frame = NSMakeRect(0, 0, 256, 256);
-        NSWindow* window = [[NSWindow alloc]
-                               initWithContentRect:frame styleMask:NSTitledWindowMask
-                               backing:NSBackingStoreBuffered defer:NO];
+        NSWindow* window = [[NSWindow alloc] 
+                                initWithContentRect:rect
+                                styleMask:NSWindowStyleMaskTitled
+                                backing:NSBackingStoreBuffered
+                                defer:NO];
         [window cascadeTopLeftFromPoint:NSMakePoint(20,20)];
+        window.styleMask |= NSWindowStyleMaskResizable;
+        window.styleMask |= NSWindowStyleMaskMiniaturizable ;
+        window.styleMask |= NSWindowStyleMaskClosable;
         window.title = [[NSProcessInfo processInfo] processName];
         [window makeKeyAndOrderFront:nil];
 
@@ -42,6 +50,7 @@ int main () {
 
         // Run.
         [NSApp run];
+        NSLog(@"run()");
     }
     return 0;
 }
@@ -69,6 +78,7 @@ constexpr int uniformBufferCount = 3;
 }
 
 - (id)initWithFrame:(CGRect)inFrame {
+    NSLog(@"initWithFrame()");
     id<MTLDevice> device = MTLCreateSystemDefaultDevice();
     self = [super initWithFrame:inFrame device:device];
     if (self) {
@@ -78,16 +88,26 @@ constexpr int uniformBufferCount = 3;
 }
 
 - (void)setup {
+    NSLog(@"setup()");
     // Set view settings.
     self.colorPixelFormat = MTLPixelFormatBGRA8Unorm;
     self.depthStencilPixelFormat = MTLPixelFormatDepth32Float_Stencil8;
 
     // Load shaders.
     NSError *error = nil;
+
+
     _library = [self.device newLibraryWithFile: @"shaders.metallib" error:&error];
+    //_library = self.device newLibraryWithFile(@"shaders.metallib",error);
+    //_library = makeLibrary(@"./shaders.metallib");
+    //_library = [self.device makeLibrary: @"./shaders.metallib" error:&error];
+    //typealias MTLNewLibraryCompletionHandler = (MTLLibrary?, Error?) -> Void
+
     if (!_library) {
-        NSLog(@"Failed to load library. error %@", error);
+        NSLog(@"Failed to load (shaders.metallib)library. error ===== %@", error);
         exit(0);
+    }else{
+        NSLog(@"setup().Loaded....shaders.metallib");
     }
     id <MTLFunction> vertFunc = [_library newFunctionWithName:@"vert"];
     id <MTLFunction> fragFunc = [_library newFunctionWithName:@"frag"];
