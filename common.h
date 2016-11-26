@@ -11,10 +11,15 @@ enum VertexAttributes {
 enum BufferIndex  {
     MeshVertexBuffer = 0,
     FrameUniformBuffer = 1,
+    ResolutionBuffer = 2,
 };
 
 struct FrameUniforms {
     simd::float4x4 projectionViewModel;
+    simd::float2 resolution;
+	float resolutionX;
+	float resolutionY;
+    float resolutionArr[2];
 };
 
 #endif
