@@ -26,6 +26,7 @@ or, if you want to do it manually:
 
 #### Run
 	cd metal-without-xcode
+	make
 	sh main_run.sh
 
 
